@@ -12,9 +12,27 @@
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
 
-<body style="background-color: #282828;margin:10px">
+<body style="background-color: #282828;margin:10px; overflow-y: scroll; overflow-x: hidden;">
     <div>
-        <h1 style="color: white;">PM2 Web Monitor</h1>
+        <h1 style="color: white;">PM2 Web Monitor <%='\t'%> <span style="font-size: 14px;">by Geraldo Jr.</span></h1>
+        <h2 style="color: white;">Server:</h2>
+        <table class="table table-dark">
+            <tr>
+                <th>CPU</th>
+                <th>USAGE MEN</th>
+                <th>FREE MEN</th>
+                <th>TOTAL MEN</th>
+                <th>UPTIME</th>
+            </tr>
+            <tr>
+                <td><%= osInformation.cpuUsage[0].speed %> Mhz</td>
+                <td><%= (osInformation.menUsage / (1024*1024*1024)).toFixed(2) %> GB</td>
+                <td><%= (osInformation.freeMen / (1024*1024*1024)).toFixed(2) %> GB</td>
+                <td><%= (osInformation.totalMen / (1024*1024*1024)).toFixed(2) %> GB</td>
+                <td><%= ((osInformation.uptime / 60)/ 60).toFixed(2) %> Hrs</td>
+            </tr>
+        </table>
+        <h2 style="color: white;">Processors:</h2>
         <table class="table table-dark">
             <tr>
                 <th>ID</th>
@@ -35,14 +53,71 @@
                     <%= description.status %>
                 </td>
                 <td><%= description.restarts %> </td>
-                <td><%= description.monit.cpu %> </td>
-                <td><%= description.monit.memory %> </td>
+                <td><%= description.monit.cpu %> %</td>
+                <td><%= (description.monit.memory / (1024*1024)).toFixed(2) %> MB</td>
                 <td><%= description.uptime %> </td>
             </tr>
             <% } %>
         </table>
+        <h2 style="color: white;">Out Logs:</h2>
+        <div class="row">
+            <% for (description of processDescriptionList) { %>
+            <div class="col-md-6">
+                <table class="table table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>NAME</th>
+                    </tr>
+                    <tr>
+                        <td><%= description.id %> </td>
+                        <td><%= description.name %> </td>
+                    </tr>
+                    <tr>
+                        <th>LOGS</th>
+                        <th></th>
+                    </tr>
+                    <% for (outlog of description.outlogs) { %>
+                    <tr>
+                        <td><%= outlog %> </td>
+                        <td></td>
+                    </tr>
+                    <% } %>
+                </table>
+            </div>
+            <% } %>
+        </div>
+        <h2 style="color: white;">Error Logs:</h2>
+        <div class="row">
+            <% for (description of processDescriptionList) { %>
+            <div class="col-md-6" style="height: 600px; overflow-y: scroll; overflow-x: hidden;">
+                <table class="table table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>NAME</th>
+                    </tr>
+                    <tr>
+                        <td><%= description.id %> </td>
+                        <td><%= description.name %> </td>
+                    </tr>
+                    <tr>
+                        <th>LOGS</th>
+                        <th></th>
+                    </tr>
+                    <% for (errorlog of description.errorlogs) { %>
+                    <tr>
+                        <td><%= errorlog %> </td>
+                        <td></td>
+                    </tr>
+                    <% } %>
+                </table>
+            </div>
+            <% } %>
+        </div>
     </div>
 </body>
+<script>
+    setInterval(() => location.reload(), 3000);
+</script>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
     integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
     crossorigin="anonymous"></script>
